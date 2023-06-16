@@ -10,7 +10,7 @@ public class doodle : MonoBehaviour
     private float moveInput;
     private float speed = 10f;
     public GameObject bulletPrefab; // Префаб пули
-    private bool isShooting = false; // Флаг, указывающий, происходит ли выстрел
+    private bool isShooting = false; // Флаг, указывающий, происходит ли выстрел?
 
 
     void Start()
@@ -21,7 +21,7 @@ public class doodle : MonoBehaviour
     void FixedUpdate()
     {
         //Счет
-        if(gameObject.transform.position.y > PlayerPrefs.GetFloat("Highscore"))
+        if (gameObject.transform.position.y > PlayerPrefs.GetFloat("Highscore"))
         {
             PlayerPrefs.SetFloat("Highscore", gameObject.transform.position.y);
             PlayerPrefs.Save();
@@ -36,6 +36,8 @@ public class doodle : MonoBehaviour
         else if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
         {
             horiz = Input.acceleration.x;
+            horiz = Mathf.Clamp(horiz, -1f, 1f); // Ограничение значения horiz от -1 до 1
+            DoodleBody.velocity = new Vector2(horiz * speed, DoodleBody.velocity.y);
         }
 
         if (Input.acceleration.x < 0)
@@ -64,9 +66,10 @@ public class doodle : MonoBehaviour
             }
         }
     }
+
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.CompareTag("Finish"))
+        if (collision.gameObject.CompareTag("Finish"))
         {
             SceneManager.LoadScene("GameOverScene");
         }

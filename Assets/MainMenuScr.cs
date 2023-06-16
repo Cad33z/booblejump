@@ -23,7 +23,6 @@ public class MainMenuScr : MonoBehaviour
 
     public void GameExit()
     {
-        EditorApplication.isPlaying = false;
         Application.Quit();
     }
 

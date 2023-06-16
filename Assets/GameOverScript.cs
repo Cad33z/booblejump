@@ -19,7 +19,6 @@ public class GameOverScript : MonoBehaviour
     public void GameExit()
     {
         Application.Quit();
-        EditorApplication.isPlaying = false;
     }
 
 }

@@ -8,10 +8,7 @@ public class ExitGameScript : MonoBehaviour
 
     public void GameExit()
     {
-    
-        EditorApplication.isPlaying = false; 
-        
-        //Application.Quit(); }endif 
+        Application.Quit();
     }
 
 }
