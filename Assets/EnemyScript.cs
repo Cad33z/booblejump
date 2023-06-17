@@ -7,6 +7,7 @@ public class EnemyScript : MonoBehaviour
 {
     public AudioSource enemySound;
     public BoxCollider2D enemyCollider;
+    public AudioSource deathSound;
    
 
     void Start()
@@ -25,8 +26,7 @@ public class EnemyScript : MonoBehaviour
 
         if (collision.gameObject.CompareTag("Bullet"))
         {
-       
-            
+            deathSound.Play();
             Vector3 spawnerPosition = new Vector3();
             spawnerPosition.x = Random.Range(-1.7f, 1.7f);
             spawnerPosition.y = Random.Range(transform.position.y + 20f, transform.position.y + 21f);

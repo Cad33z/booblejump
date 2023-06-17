@@ -1,39 +1,66 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlatformGenerator : MonoBehaviour
 {
-    public GameObject Doodle_PlatformGreenPrefab;
-    public GameObject Doodle_BrokenPlatformPrefab;
+    public GameObject platformPrefab;
+    public float platformHeight;
 
-    public int normalPlatformCount;
-    public int brokenPlatformCount;
+    private bool isDrawing = false;
+    private Vector2 lastPosition;
+    private GameObject currentPlatform;
 
-    void Start()
+    private void Update()
     {
-        GeneratePlatforms();
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+
+            if (touch.phase == TouchPhase.Began)
+            {
+                StartDrawing(touch.position);
+            }
+            else if (touch.phase == TouchPhase.Moved)
+            {
+                if (isDrawing)
+                {
+                    ContinueDrawing(touch.position);
+                }
+            }
+            else if (touch.phase == TouchPhase.Ended)
+            {
+                StopDrawing();
+            }
+        }
     }
 
-    void GeneratePlatforms()
+    private void StartDrawing(Vector2 position)
     {
-        Vector3 spawnerPosition = new Vector3();
-        Vector3 spawnerPosition2 = new Vector3();
+        isDrawing = true;
+        lastPosition = Camera.main.ScreenToWorldPoint(position);
+        currentPlatform = Instantiate(platformPrefab, lastPosition, Quaternion.identity);
+        currentPlatform.transform.SetParent(transform);
+    }
 
-        for (int i = 0; i < normalPlatformCount; i++)
+    private void ContinueDrawing(Vector2 position)
+    {
+        Vector2 currentPos = Camera.main.ScreenToWorldPoint(position);
+        RaycastHit2D hit = Physics2D.Linecast(lastPosition, currentPos);
+
+        if (hit.collider != null && hit.collider.gameObject == currentPlatform)
         {
-            spawnerPosition.x = Random.Range(-1.7f, 1.7f);
-            spawnerPosition.y += Random.Range(1.5f, 4f);
-
-            Instantiate(Doodle_PlatformGreenPrefab, spawnerPosition, Quaternion.identity);
+            ResizePlatform(currentPos);
         }
+    }
 
-        for (int i = 0; i < brokenPlatformCount; i++)
-        {
-            spawnerPosition2.x = Random.Range(-1.7f, 1.7f);
-            spawnerPosition2.y += Random.Range(1.5f, 4f);
+    private void StopDrawing()
+    {
+        isDrawing = false;
+    }
 
-            Instantiate(Doodle_BrokenPlatformPrefab, spawnerPosition2, Quaternion.identity);
-        }
+    private void ResizePlatform(Vector2 currentPos)
+    {
+        Vector2 platformScale = new Vector2(Vector2.Distance(lastPosition, currentPos), platformHeight);
+        currentPlatform.transform.localScale = new Vector3(platformScale.x, currentPlatform.transform.localScale.y, currentPlatform.transform.localScale.z);
+        currentPlatform.transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(currentPos.y - lastPosition.y, currentPos.x - lastPosition.x) * Mathf.Rad2Deg);
     }
 }

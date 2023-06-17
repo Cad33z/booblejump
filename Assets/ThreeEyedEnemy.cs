@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class ThreeEyedEnemy : MonoBehaviour
 {
     public AudioSource enemySound;
+    public AudioSource deathSound;
     public BoxCollider2D enemyCollider;
     public Animator ThreeEyedEnemyAnimator;
     public bool killed;
@@ -29,11 +30,16 @@ public class ThreeEyedEnemy : MonoBehaviour
             Physics2D.IgnoreCollision(enemyCollider, collision.collider);
         }
 
-        if (collision.gameObject.CompareTag("Bullet"))
+        if (collision.gameObject.CompareTag("Bullet") && !killed)
         {
+            deathSound.Play();
             ThreeEyedEnemyAnimator.SetTrigger("Dead");
             killed = true;
             enemySound.Stop();
+        }
+        else
+        {
+            Physics2D.IgnoreCollision(enemyCollider, collision.collider);
         }
 
 
